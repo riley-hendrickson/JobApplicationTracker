@@ -1,0 +1,30 @@
+### Get all companies
+GET http://localhost:8080/api/companies
+
+### Get company by ID
+GET http://localhost:8080/api/companies/1
+
+### Create a company
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+
+{
+  "name": "Google",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+### Update a company
+PUT http://localhost:8080/api/companies/1
+Content-Type: application/json
+
+{
+  "name": "Google LLC",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+### Delete a company
+DELETE http://localhost:8080/api/companies/1
