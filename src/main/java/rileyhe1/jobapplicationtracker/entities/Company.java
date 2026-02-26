@@ -1,4 +1,4 @@
-package rileyhe1.jobapplicationtracker.models;
+package rileyhe1.jobapplicationtracker.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

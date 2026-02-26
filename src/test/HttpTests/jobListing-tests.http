@@ -1,0 +1,85 @@
+### Create a company to work with first
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+
+{
+  "name": "Google",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+###
+
+### Create a job listing for company 1
+POST http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Java backend role",
+  "salaryMin": 90000,
+  "salaryMax": 120000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01"
+}
+
+###
+
+### Create a second listing with different status
+POST http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Senior Engineer",
+  "description": "Senior Java role",
+  "salaryMin": 130000,
+  "salaryMax": 160000,
+  "listingStatus": "CLOSED",
+  "datePosted": "2026-01-15"
+}
+
+###
+
+### Get all listings
+GET http://localhost:8080/api/job-listings
+
+###
+
+### Get listing by id
+GET http://localhost:8080/api/job-listings/1
+
+###
+
+### Search by company id
+GET http://localhost:8080/api/job-listings/search?companyId=1
+
+###
+
+### Search by status
+GET http://localhost:8080/api/job-listings/search?listingStatus=OPEN
+
+###
+
+### Search by both
+GET http://localhost:8080/api/job-listings/search?companyId=1&listingStatus=CLOSED
+
+###
+
+### Update a listing
+PUT http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Backend Developer II",
+  "description": "Updated Java backend role",
+  "salaryMin": 95000,
+  "salaryMax": 125000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01"
+}
+
+###
+
+### Delete a listing
+DELETE http://localhost:8080/api/job-listings/2

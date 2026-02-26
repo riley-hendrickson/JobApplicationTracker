@@ -3,7 +3,7 @@ package rileyhe1.jobapplicationtracker.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rileyhe1.jobapplicationtracker.models.Company;
+import rileyhe1.jobapplicationtracker.entities.Company;
 import rileyhe1.jobapplicationtracker.services.CompanyService;
 
 import java.util.List;

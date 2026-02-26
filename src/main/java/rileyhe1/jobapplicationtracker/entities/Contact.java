@@ -1,9 +1,9 @@
-package rileyhe1.jobapplicationtracker.models;
+package rileyhe1.jobapplicationtracker.entities;
 
 import jakarta.persistence.*;
 
 @Entity
-public class JobListing
+public class Contact
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
