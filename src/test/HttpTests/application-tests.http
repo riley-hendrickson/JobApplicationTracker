@@ -1,0 +1,128 @@
+### Create a company
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+
+{
+  "name": "Google",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+###
+
+### Create a job listing for company 1
+POST http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Java backend role",
+  "salaryMin": 90000,
+  "salaryMax": 120000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01"
+}
+
+###
+
+### Create a contact for company 1
+POST http://localhost:8080/api/contacts/1
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "title": "Engineering Manager",
+  "email": "john.smith@google.com",
+  "phoneNumber": "425-555-1234"
+}
+
+###
+
+### Create application without contact
+POST http://localhost:8080/api/applications/1
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Applied through LinkedIn",
+  "applicationStatus": "APPLIED"
+}
+
+###
+
+### Try to create duplicate application - should throw error
+POST http://localhost:8080/api/applications/1
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Duplicate attempt",
+  "applicationStatus": "APPLIED"
+}
+
+###
+
+### Create second listing and application with contact
+POST http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Senior Engineer",
+  "description": "Senior Java role",
+  "salaryMin": 130000,
+  "salaryMax": 160000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-01-15"
+}
+
+###
+
+POST http://localhost:8080/api/applications/2?contactId=1
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-20",
+  "notes": "Referred by John Smith",
+  "applicationStatus": "APPLIED"
+}
+
+###
+
+### Get all applications
+GET http://localhost:8080/api/applications
+
+###
+
+### Get application by id
+GET http://localhost:8080/api/applications/1
+
+###
+
+### Update application status via PATCH
+PATCH http://localhost:8080/api/applications/1/status
+Content-Type: application/json
+
+"PHONE_SCREEN"
+
+###
+
+### Verify status update
+GET http://localhost:8080/api/applications/1
+
+###
+
+### Update full application
+PUT http://localhost:8080/api/applications/1?contactId=1
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Updated notes after phone screen",
+  "applicationStatus": "INTERVIEW"
+}
+
+###
+
+### Delete application
+DELETE http://localhost:8080/api/applications/2

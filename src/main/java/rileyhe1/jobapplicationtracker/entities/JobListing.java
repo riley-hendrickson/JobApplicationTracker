@@ -17,15 +17,13 @@ public class JobListing
     private String description;
     private Integer salaryMin;
     private Integer salaryMax;
-
+    private LocalDate datePosted;
     @Enumerated(EnumType.STRING)
     private ListingStatus listingStatus;
 
 //    @OneToOne
 //    private Application application;
 
-
-    private LocalDate datePosted;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -53,6 +51,16 @@ public class JobListing
     {
         return id;
     }
+
+//    public Application getApplication()
+//    {
+//        return application;
+//    }
+//
+//    public void setApplication(Application application)
+//    {
+//        this.application = application;
+//    }
 
     public Company getCompany()
     {
