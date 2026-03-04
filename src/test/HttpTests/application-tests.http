@@ -1,3 +1,7 @@
+### ========================
+### APPLICATION TESTS
+### ========================
+
 ### Create a company
 POST http://localhost:8080/api/companies
 Content-Type: application/json
@@ -11,8 +15,8 @@ Content-Type: application/json
 
 ###
 
-### Create a job listing for company 1
-POST http://localhost:8080/api/job-listings/1
+### Create a job listing
+POST http://localhost:8080/api/job-listings
 Content-Type: application/json
 
 {
@@ -21,50 +25,14 @@ Content-Type: application/json
   "salaryMin": 90000,
   "salaryMax": 120000,
   "listingStatus": "OPEN",
-  "datePosted": "2026-02-01"
+  "datePosted": "2026-02-01",
+  "companyId": 1
 }
 
 ###
 
-### Create a contact for company 1
-POST http://localhost:8080/api/contacts/1
-Content-Type: application/json
-
-{
-  "name": "John Smith",
-  "title": "Engineering Manager",
-  "email": "john.smith@google.com",
-  "phoneNumber": "425-555-1234"
-}
-
-###
-
-### Create application without contact
-POST http://localhost:8080/api/applications/1
-Content-Type: application/json
-
-{
-  "dateApplied": "2026-02-15",
-  "notes": "Applied through LinkedIn",
-  "applicationStatus": "APPLIED"
-}
-
-###
-
-### Try to create duplicate application - should throw error
-POST http://localhost:8080/api/applications/1
-Content-Type: application/json
-
-{
-  "dateApplied": "2026-02-15",
-  "notes": "Duplicate attempt",
-  "applicationStatus": "APPLIED"
-}
-
-###
-
-### Create second listing and application with contact
-POST http://localhost:8080/api/job-listings/1
+### Create a second listing
+POST http://localhost:8080/api/job-listings
 Content-Type: application/json
 
 {
@@ -73,18 +41,62 @@ Content-Type: application/json
   "salaryMin": 130000,
   "salaryMax": 160000,
   "listingStatus": "OPEN",
-  "datePosted": "2026-01-15"
+  "datePosted": "2026-01-15",
+  "companyId": 1
 }
 
 ###
 
-POST http://localhost:8080/api/applications/2?contactId=1
+### Create a contact
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "title": "Engineering Manager",
+  "email": "john.smith@google.com",
+  "phoneNumber": "425-555-1234",
+  "companyId": 1
+}
+
+###
+
+### Create application without contact
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Applied through LinkedIn",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 1
+}
+
+###
+
+### Create application with contact
+POST http://localhost:8080/api/applications
 Content-Type: application/json
 
 {
   "dateApplied": "2026-02-20",
   "notes": "Referred by John Smith",
-  "applicationStatus": "APPLIED"
+  "applicationStatus": "APPLIED",
+  "jobListingId": 2,
+  "contactId": 1
+}
+
+###
+
+### Try duplicate application - should return 404 with error message
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Duplicate attempt",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 1
 }
 
 ###
@@ -99,7 +111,7 @@ GET http://localhost:8080/api/applications/1
 
 ###
 
-### Update application status via PATCH
+### Update status via PATCH
 PATCH http://localhost:8080/api/applications/1/status
 Content-Type: application/json
 
@@ -113,16 +125,28 @@ GET http://localhost:8080/api/applications/1
 ###
 
 ### Update full application
-PUT http://localhost:8080/api/applications/1?contactId=1
+PUT http://localhost:8080/api/applications/1
 Content-Type: application/json
 
 {
   "dateApplied": "2026-02-15",
-  "notes": "Updated notes after phone screen",
-  "applicationStatus": "INTERVIEW"
+  "notes": "Updated after phone screen",
+  "applicationStatus": "INTERVIEW",
+  "jobListingId": 1,
+  "contactId": 1
 }
+
+###
+
+### Verify full update
+GET http://localhost:8080/api/applications/1
 
 ###
 
 ### Delete application
 DELETE http://localhost:8080/api/applications/2
+
+###
+
+### Verify deletion - should return 404
+GET http://localhost:8080/api/applications/2

@@ -1,3 +1,7 @@
+### ========================
+### CONTACT TESTS
+### ========================
+
 ### Create a company to work with
 POST http://localhost:8080/api/companies
 Content-Type: application/json
@@ -24,28 +28,30 @@ Content-Type: application/json
 
 ###
 
-### Create a contact for company 1
-POST http://localhost:8080/api/contacts/1
+### Create contact 1 for company 1
+POST http://localhost:8080/api/contacts
 Content-Type: application/json
 
 {
   "name": "John Smith",
   "title": "Engineering Manager",
   "email": "john.smith@google.com",
-  "phoneNumber": "425-555-1234"
+  "phoneNumber": "425-555-1234",
+  "companyId": 1
 }
 
 ###
 
-### Create a second contact for company 1
-POST http://localhost:8080/api/contacts/1
+### Create contact 2 for company 1
+POST http://localhost:8080/api/contacts
 Content-Type: application/json
 
 {
   "name": "Jane Doe",
   "title": "Senior Recruiter",
   "email": "jane.doe@google.com",
-  "phoneNumber": "425-555-5678"
+  "phoneNumber": "425-555-5678",
+  "companyId": 1
 }
 
 ###
@@ -66,14 +72,15 @@ GET http://localhost:8080/api/contacts/search?companyId=1
 ###
 
 ### Update contact - reassign to company 2
-PUT http://localhost:8080/api/contacts/1?companyId=2
+PUT http://localhost:8080/api/contacts/1
 Content-Type: application/json
 
 {
   "name": "John Smith",
   "title": "Principal Engineer",
   "email": "john.smith@microsoft.com",
-  "phoneNumber": "425-555-1234"
+  "phoneNumber": "425-555-1234",
+  "companyId": 2
 }
 
 ###

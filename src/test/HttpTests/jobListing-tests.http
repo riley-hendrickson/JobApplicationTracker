@@ -1,4 +1,8 @@
-### Create a company to work with first
+### ========================
+### JOB LISTING TESTS
+### ========================
+
+### Create a company to work with
 POST http://localhost:8080/api/companies
 Content-Type: application/json
 
@@ -11,8 +15,8 @@ Content-Type: application/json
 
 ###
 
-### Create a job listing for company 1
-POST http://localhost:8080/api/job-listings/1
+### Create listing 1 for company 1
+POST http://localhost:8080/api/job-listings
 Content-Type: application/json
 
 {
@@ -21,13 +25,14 @@ Content-Type: application/json
   "salaryMin": 90000,
   "salaryMax": 120000,
   "listingStatus": "OPEN",
-  "datePosted": "2026-02-01"
+  "datePosted": "2026-02-01",
+  "companyId": 1
 }
 
 ###
 
-### Create a second listing with different status
-POST http://localhost:8080/api/job-listings/1
+### Create listing 2 for company 1
+POST http://localhost:8080/api/job-listings
 Content-Type: application/json
 
 {
@@ -36,7 +41,8 @@ Content-Type: application/json
   "salaryMin": 130000,
   "salaryMax": 160000,
   "listingStatus": "CLOSED",
-  "datePosted": "2026-01-15"
+  "datePosted": "2026-01-15",
+  "companyId": 1
 }
 
 ###
@@ -76,7 +82,8 @@ Content-Type: application/json
   "salaryMin": 95000,
   "salaryMax": 125000,
   "listingStatus": "OPEN",
-  "datePosted": "2026-02-01"
+  "datePosted": "2026-02-01",
+  "companyId": 1
 }
 
 ###
