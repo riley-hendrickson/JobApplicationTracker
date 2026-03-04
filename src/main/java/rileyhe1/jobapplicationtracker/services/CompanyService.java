@@ -21,22 +21,21 @@ public class CompanyService
 
     public CompanyResponse getCompanyByID(Long id)
     {
-        return mapToCompanyResponse(companyRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(id + " not found")));
+        return companyToResponse(companyRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Company id: " + id + " not found")));
     }
 
     public List<CompanyResponse> getAllCompanies()
     {
         return companyRepository.findAll()
                 .stream()
-                .map(this::mapToCompanyResponse)
+                .map(this::companyToResponse)
                 .collect(Collectors.toList());
     }
 
     public CompanyResponse createCompany(CompanyRequest newCompany)
     {
-        Company saved = companyRepository.save(mapToCompany(newCompany));
-        return mapToCompanyResponse(saved);
+        return companyToResponse(companyRepository.save(requestToCompany(newCompany)));
     }
 
     public void updateCompany(Long id, CompanyRequest updatedCompany)
@@ -59,7 +58,7 @@ public class CompanyService
     }
 
     // dto helpers
-    private Company mapToCompany(CompanyRequest companyRequest)
+    private Company requestToCompany(CompanyRequest companyRequest)
     {
         Company newCompany = new Company();
 
@@ -71,7 +70,7 @@ public class CompanyService
         return newCompany;
     }
 
-    private CompanyResponse mapToCompanyResponse(Company company)
+    private CompanyResponse companyToResponse(Company company)
     {
         CompanyResponse response = new CompanyResponse();
 

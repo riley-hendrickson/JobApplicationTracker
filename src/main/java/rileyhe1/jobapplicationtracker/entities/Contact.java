@@ -1,9 +1,15 @@
 package rileyhe1.jobapplicationtracker.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "contacts")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Contact
 {
     @Id
@@ -18,8 +24,6 @@ public class Contact
     @JoinColumn(name = "company_id")
     private Company company;
 
-    public Contact() {}
-
     public Contact(Long id, String name, String title, String email, String phoneNumber)
     {
         this.id = id;
@@ -27,65 +31,5 @@ public class Contact
         this.title = title;
         this.email = email;
         this.phoneNumber = phoneNumber;
-    }
-
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    public Long getId()
-    {
-        return id;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
-
-    public String getEmail()
-    {
-        return email;
-    }
-
-    public void setEmail(String email)
-    {
-        this.email = email;
-    }
-
-    public String getPhoneNumber()
-    {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber)
-    {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Company getCompany()
-    {
-        return company;
-    }
-
-    public void setCompany(Company company)
-    {
-        this.company = company;
     }
 }

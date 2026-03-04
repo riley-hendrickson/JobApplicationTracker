@@ -38,7 +38,7 @@ public class ApplicationService
     public ApplicationResponse getApplication(Long applicationId)
     {
         return applicationToResponse(applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalStateException("Application id " + applicationId + " not found")));
+                .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
     }
 
     public ApplicationResponse createApplication(ApplicationRequest newApplication)
@@ -54,7 +54,7 @@ public class ApplicationService
     public void updateApplicationStatus(Long existingApplicationId, ApplicationStatus newStatus)
     {
         Application existingApplication = applicationRepository.findById(existingApplicationId)
-                .orElseThrow(() -> new IllegalStateException("application id: " + existingApplicationId + " not found"));
+                .orElseThrow(() -> new IllegalStateException("Application id: " + existingApplicationId + " not found"));
 
         existingApplication.setApplicationStatus(newStatus);
         applicationRepository.save(existingApplication);
@@ -72,7 +72,7 @@ public class ApplicationService
         if(updatedApplication.getContactId() != null)
         {
             existingApplication.setContact(contactRepository.findById(updatedApplication.getContactId())
-                    .orElseThrow(() -> new IllegalStateException("contact id: " + updatedApplication.getContactId() + " not found")));
+                    .orElseThrow(() -> new IllegalStateException("Contact id: " + updatedApplication.getContactId() + " not found")));
         }
 
         applicationRepository.save(existingApplication);
@@ -92,9 +92,6 @@ public class ApplicationService
         }
 
         applicationRepository.delete(application);
-
-//        applicationRepository.delete(applicationRepository.findById(applicationId)
-//                .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
     }
 
     // dto helpers
@@ -106,11 +103,11 @@ public class ApplicationService
         application.setNotes(applicationRequest.getNotes());
         application.setApplicationStatus(applicationRequest.getApplicationStatus());
         application.setJobListing(jobListingRepository.findById(applicationRequest.getJobListingId())
-                .orElseThrow(() -> new IllegalStateException("job listing id: " + applicationRequest.getJobListingId() + " not found")));
+                .orElseThrow(() -> new IllegalStateException("Job listing id: " + applicationRequest.getJobListingId() + " not found")));
         if(applicationRequest.getContactId() != null)
         {
             application.setContact(contactRepository.findById(applicationRequest.getContactId())
-                    .orElseThrow(() -> new IllegalStateException("contact id: " + applicationRequest.getContactId() + " not found")));
+                    .orElseThrow(() -> new IllegalStateException("Contact id: " + applicationRequest.getContactId() + " not found")));
         }
 
         return application;
