@@ -1,0 +1,314 @@
+### ========================
+### COMPANY ENDPOINTS
+### ========================
+
+### Create company 1
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+
+{
+  "name": "Google",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+###
+
+### Create company 2
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+
+{
+  "name": "Microsoft",
+  "location": "Redmond, WA",
+  "website": "microsoft.com",
+  "industry": "Technology"
+}
+
+###
+
+### Get all companies
+GET http://localhost:8080/api/companies
+
+###
+
+### Get company by id
+GET http://localhost:8080/api/companies/1
+
+###
+
+### Update company
+PUT http://localhost:8080/api/companies/1
+Content-Type: application/json
+
+{
+  "name": "Google LLC",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+###
+
+### ========================
+### JOB LISTING ENDPOINTS
+### ========================
+
+### Create listing 1 for company 1
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Java backend role focused on Spring Boot microservices",
+  "salaryMin": 90000,
+  "salaryMax": 120000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01",
+  "companyId": 1
+}
+
+###
+
+### Create listing 2 for company 1
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+
+{
+  "title": "Senior Engineer",
+  "description": "Senior Java role with team lead responsibilities",
+  "salaryMin": 130000,
+  "salaryMax": 160000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-01-15",
+  "companyId": 1
+}
+
+###
+
+### Create listing 3 for company 2
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+
+{
+  "title": "Java Developer",
+  "description": "Java developer role at Microsoft",
+  "salaryMin": 95000,
+  "salaryMax": 125000,
+  "listingStatus": "CLOSED",
+  "datePosted": "2026-01-01",
+  "companyId": 2
+}
+
+###
+
+### Get all listings
+GET http://localhost:8080/api/job-listings
+
+###
+
+### Get listing by id
+GET http://localhost:8080/api/job-listings/1
+
+###
+
+### Search by company id
+GET http://localhost:8080/api/job-listings/search?companyId=1
+
+###
+
+### Search by status
+GET http://localhost:8080/api/job-listings/search?listingStatus=OPEN
+
+###
+
+### Search by company id and status
+GET http://localhost:8080/api/job-listings/search?companyId=1&listingStatus=OPEN
+
+###
+
+### Update listing
+PUT http://localhost:8080/api/job-listings/1
+Content-Type: application/json
+
+{
+  "title": "Backend Developer II",
+  "description": "Updated Java backend role",
+  "salaryMin": 95000,
+  "salaryMax": 125000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01",
+  "companyId": 1
+}
+
+###
+
+### ========================
+### CONTACT ENDPOINTS
+### ========================
+
+### Create contact 1 for company 1
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "title": "Engineering Manager",
+  "email": "john.smith@google.com",
+  "phoneNumber": "425-555-1234",
+  "companyId": 1
+}
+
+###
+
+### Create contact 2 for company 1
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "title": "Senior Recruiter",
+  "email": "jane.doe@google.com",
+  "phoneNumber": "425-555-5678",
+  "companyId": 1
+}
+
+###
+
+### Get all contacts
+GET http://localhost:8080/api/contacts
+
+###
+
+### Get contact by id
+GET http://localhost:8080/api/contacts/1
+
+###
+
+### Search contacts by company id
+GET http://localhost:8080/api/contacts/search?companyId=1
+
+###
+
+### Update contact - reassign to company 2
+PUT http://localhost:8080/api/contacts/1
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "title": "Principal Engineer",
+  "email": "john.smith@microsoft.com",
+  "phoneNumber": "425-555-1234",
+  "companyId": 2
+}
+
+###
+
+### Verify reassignment - search company 2 contacts
+GET http://localhost:8080/api/contacts/search?companyId=2
+
+###
+
+### ========================
+### APPLICATION ENDPOINTS
+### ========================
+
+### Create application with contact for listing 1
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Referred by John Smith",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 1,
+  "contactId": 1
+}
+
+###
+
+### Create application without contact for listing 2
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-20",
+  "notes": "Applied through LinkedIn",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 2
+}
+
+###
+
+### Try duplicate application for listing 1 - should error
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Duplicate attempt",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 1
+}
+
+###
+
+### Get all applications
+GET http://localhost:8080/api/applications
+
+###
+
+### Get application by id
+GET http://localhost:8080/api/applications/1
+
+###
+
+### Update status via PATCH
+PATCH http://localhost:8080/api/applications/1/status
+Content-Type: application/json
+
+"PHONE_SCREEN"
+
+###
+
+### Verify status update
+GET http://localhost:8080/api/applications/1
+
+###
+
+### Update full application - add contact to application 2
+PUT http://localhost:8080/api/applications/2
+Content-Type: application/json
+
+{
+  "dateApplied": "2026-02-20",
+  "notes": "Heard back after applying through LinkedIn",
+  "applicationStatus": "INTERVIEW",
+  "jobListingId": 2,
+  "contactId": 2
+}
+
+###
+
+### Verify full update
+GET http://localhost:8080/api/applications/2
+
+###
+
+### Delete application 2
+DELETE http://localhost:8080/api/applications/2
+
+###
+
+### Verify deletion - should error
+GET http://localhost:8080/api/applications/2
+
+###
+
+### ========================
+### CLEANUP
+### ========================
+
+### Delete company (tests cascade delete of listings and contacts)
+DELETE http://localhost:8080/api/companies/2

@@ -1,10 +1,13 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import rileyhe1.jobapplicationtracker.dto.company.CompanyRequest;
+import rileyhe1.jobapplicationtracker.dto.company.CompanyResponse;
 import rileyhe1.jobapplicationtracker.entities.Company;
 import rileyhe1.jobapplicationtracker.repositories.CompanyRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyService
@@ -16,23 +19,27 @@ public class CompanyService
         this.companyRepository = companyRepository;
     }
 
-    public Company getCompanyByID(Long id)
+    public CompanyResponse getCompanyByID(Long id)
     {
-        return companyRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(id + " not found"));
+        return mapToCompanyResponse(companyRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException(id + " not found")));
     }
 
-    public List<Company> getAllCompanies()
+    public List<CompanyResponse> getAllCompanies()
     {
-        return companyRepository.findAll();
+        return companyRepository.findAll()
+                .stream()
+                .map(this::mapToCompanyResponse)
+                .collect(Collectors.toList());
     }
 
-    public Company createCompany(Company newCompany)
+    public CompanyResponse createCompany(CompanyRequest newCompany)
     {
-        return companyRepository.save(newCompany);
+        Company saved = companyRepository.save(mapToCompany(newCompany));
+        return mapToCompanyResponse(saved);
     }
 
-    public void updateCompany(Long id, Company updatedCompany)
+    public void updateCompany(Long id, CompanyRequest updatedCompany)
     {
         Company existingCompany = companyRepository.findById(id)
                         .orElseThrow(() -> new IllegalStateException(id + " not found"));
@@ -49,5 +56,31 @@ public class CompanyService
     {
         companyRepository.delete(companyRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found")));
+    }
+
+    // dto helpers
+    private Company mapToCompany(CompanyRequest companyRequest)
+    {
+        Company newCompany = new Company();
+
+        newCompany.setName(companyRequest.getName());
+        newCompany.setLocation(companyRequest.getLocation());
+        newCompany.setWebsite(companyRequest.getWebsite());
+        newCompany.setIndustry(companyRequest.getIndustry());
+
+        return newCompany;
+    }
+
+    private CompanyResponse mapToCompanyResponse(Company company)
+    {
+        CompanyResponse response = new CompanyResponse();
+
+        response.setCompanyId(company.getId());
+        response.setName(company.getName());
+        response.setLocation(company.getLocation());
+        response.setWebsite(company.getWebsite());
+        response.setIndustry(company.getIndustry());
+
+        return response;
     }
 }

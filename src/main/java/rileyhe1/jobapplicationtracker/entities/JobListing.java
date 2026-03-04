@@ -21,8 +21,8 @@ public class JobListing
     @Enumerated(EnumType.STRING)
     private ListingStatus listingStatus;
 
-//    @OneToOne
-//    private Application application;
+    @OneToOne(mappedBy = "jobListing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Application application;
 
 
     @ManyToOne
@@ -52,15 +52,15 @@ public class JobListing
         return id;
     }
 
-//    public Application getApplication()
-//    {
-//        return application;
-//    }
-//
-//    public void setApplication(Application application)
-//    {
-//        this.application = application;
-//    }
+    public Application getApplication()
+    {
+        return application;
+    }
+
+    public void setApplication(Application application)
+    {
+        this.application = application;
+    }
 
     public Company getCompany()
     {

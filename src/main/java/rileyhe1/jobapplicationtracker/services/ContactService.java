@@ -1,11 +1,14 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import rileyhe1.jobapplicationtracker.dto.contact.ContactRequest;
+import rileyhe1.jobapplicationtracker.dto.contact.ContactResponse;
 import rileyhe1.jobapplicationtracker.entities.Contact;
 import rileyhe1.jobapplicationtracker.repositories.CompanyRepository;
 import rileyhe1.jobapplicationtracker.repositories.ContactRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactService
@@ -18,30 +21,34 @@ public class ContactService
         this.companyRepository = companyRepository;
     }
 
-    public List<Contact> getContacts()
+    public List<ContactResponse> getContacts()
     {
-        return contactRepository.findAll();
+        return contactRepository.findAll()
+                .stream()
+                .map(this::contactToResponse)
+                .collect(Collectors.toList());
     }
 
-    public Contact getContactByID(Long id)
+    public ContactResponse getContactByID(Long id)
     {
-        return contactRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(id + " not found"));
+        return contactToResponse(contactRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException(id + " not found")));
     }
 
-    public List<Contact> findContactsByCompanyId (Long companyId)
+    public List<ContactResponse> findContactsByCompanyId (Long companyId)
     {
-        return contactRepository.findByCompanyId(companyId);
+        return contactRepository.findByCompanyId(companyId)
+                .stream()
+                .map(this::contactToResponse)
+                .collect(Collectors.toList());
     }
 
-    public Contact createContact(Long companyId, Contact newContact)
+    public ContactResponse createContact(ContactRequest newContact)
     {
-        newContact.setCompany(companyRepository.findById(companyId)
-                .orElseThrow(() -> new IllegalStateException(companyId + " not found")));
-        return contactRepository.save(newContact);
+        return contactToResponse(contactRepository.save(requestToContact(newContact)));
     }
 
-    public void updateContact(Long existingContactId, Long companyId, Contact updatedContact)
+    public void updateContact(Long existingContactId, ContactRequest updatedContact)
     {
         Contact existingContact = contactRepository.findById(existingContactId)
                 .orElseThrow(() -> new IllegalStateException(existingContactId + " not found"));
@@ -50,8 +57,8 @@ public class ContactService
         existingContact.setTitle(updatedContact.getTitle());
         existingContact.setEmail(updatedContact.getEmail());
         existingContact.setPhoneNumber(updatedContact.getPhoneNumber());
-        existingContact.setCompany(companyRepository.findById(companyId)
-                .orElseThrow(() -> new IllegalStateException(companyId + " not found")));
+        existingContact.setCompany(companyRepository.findById(updatedContact.getCompanyId())
+                .orElseThrow(() -> new IllegalStateException(updatedContact.getCompanyId() + " not found")));
 
         contactRepository.save(existingContact);
     }
@@ -60,5 +67,34 @@ public class ContactService
     {
         contactRepository.delete(contactRepository.findById(contactId)
                 .orElseThrow(() -> new IllegalStateException(contactId + " not found")));
+    }
+
+    // dto helpers
+    private Contact requestToContact(ContactRequest contactRequest)
+    {
+        Contact contact = new Contact();
+
+        contact.setName(contactRequest.getName());
+        contact.setTitle(contactRequest.getTitle());
+        contact.setEmail(contactRequest.getEmail());
+        contact.setPhoneNumber(contactRequest.getPhoneNumber());
+        contact.setCompany(companyRepository.findById(contactRequest.getCompanyId())
+                .orElseThrow(() -> new IllegalStateException("contact request's company id: " + contactRequest.getCompanyId() + " not found")));
+        return contact;
+    }
+
+    public ContactResponse contactToResponse(Contact contact)
+    {
+        ContactResponse response = new ContactResponse();
+
+        response.setContactId(contact.getId());
+        response.setName(contact.getName());
+        response.setTitle(contact.getTitle());
+        response.setEmail(contact.getEmail());
+        response.setPhoneNumber(contact.getPhoneNumber());
+        response.setCompanyId(contact.getCompany().getId());
+        response.setCompanyName(contact.getCompany().getName());
+
+        return response;
     }
 }

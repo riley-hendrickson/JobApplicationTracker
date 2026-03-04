@@ -1,6 +1,8 @@
 package rileyhe1.jobapplicationtracker.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import rileyhe1.jobapplicationtracker.enums.ApplicationStatus;
 
 import java.time.LocalDate;
@@ -22,7 +24,8 @@ public class Application
     private JobListing jobListing;
 
     @ManyToOne
-    @JoinColumn(name = "contact_id")
+    @JoinColumn(name = "contact_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Contact contact;
 
     public Application() {}

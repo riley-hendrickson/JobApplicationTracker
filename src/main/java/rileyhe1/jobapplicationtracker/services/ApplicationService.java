@@ -1,6 +1,8 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import rileyhe1.jobapplicationtracker.dto.application.ApplicationRequest;
+import rileyhe1.jobapplicationtracker.dto.application.ApplicationResponse;
 import rileyhe1.jobapplicationtracker.entities.Application;
 import rileyhe1.jobapplicationtracker.entities.JobListing;
 import rileyhe1.jobapplicationtracker.enums.ApplicationStatus;
@@ -9,7 +11,7 @@ import rileyhe1.jobapplicationtracker.repositories.ContactRepository;
 import rileyhe1.jobapplicationtracker.repositories.JobListingRepository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService
@@ -25,31 +27,28 @@ public class ApplicationService
         this.contactRepository = contactRepository;
     }
 
-    public List<Application> getApplications() { return applicationRepository.findAll(); }
-
-    public Application getApplication(Long applicationId)
+    public List<ApplicationResponse> getApplications()
     {
-        return applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalStateException("Application id " + applicationId + " not found"));
+        return applicationRepository.findAll()
+                .stream()
+                .map(this::applicationToResponse)
+                .collect(Collectors.toList());
     }
 
-    public Application createApplication(Long listingId, Optional<Long> contactId, Application newApplication)
+    public ApplicationResponse getApplication(Long applicationId)
     {
-        JobListing jobListing = jobListingRepository.findById(listingId)
-                .orElseThrow(() -> new IllegalStateException("Job listing: " + listingId + " not found"));
-        if(applicationRepository.findByJobListingId(listingId).isPresent())
-        {
-            throw new IllegalStateException("Job listing: " + listingId + " already has an application");
-        }
-        newApplication.setJobListing(jobListing);
+        return applicationToResponse(applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalStateException("Application id " + applicationId + " not found")));
+    }
 
-        if(contactId.isPresent())
+    public ApplicationResponse createApplication(ApplicationRequest newApplication)
+    {
+        if(applicationRepository.findByJobListingId(newApplication.getJobListingId()).isPresent())
         {
-            newApplication.setContact(contactRepository.findById(contactId.get())
-                    .orElseThrow(() -> new IllegalStateException("Contact: " + contactId + " not found")));
+            throw new IllegalStateException("Job listing: " + newApplication.getJobListingId() + " already has an application");
         }
 
-        return applicationRepository.save(newApplication);
+        return applicationToResponse(applicationRepository.save(requestToApplication(newApplication)));
     }
 
     public void updateApplicationStatus(Long existingApplicationId, ApplicationStatus newStatus)
@@ -61,7 +60,7 @@ public class ApplicationService
         applicationRepository.save(existingApplication);
     }
 
-    public void updateApplication(Optional<Long> contactId, Long existingApplicationId, Application updatedApplication)
+    public void updateApplication(Long existingApplicationId, ApplicationRequest updatedApplication)
     {
         Application existingApplication = applicationRepository.findById(existingApplicationId)
                 .orElseThrow(() -> new IllegalStateException("Application id: " + existingApplicationId + " not found"));
@@ -70,10 +69,10 @@ public class ApplicationService
         existingApplication.setNotes(updatedApplication.getNotes());
         existingApplication.setDateApplied(updatedApplication.getDateApplied());
 
-        if(contactId.isPresent())
+        if(updatedApplication.getContactId() != null)
         {
-            existingApplication.setContact(contactRepository.findById(contactId.get())
-                    .orElseThrow(() -> new IllegalStateException("contact id: " + contactId + " not found")));
+            existingApplication.setContact(contactRepository.findById(updatedApplication.getContactId())
+                    .orElseThrow(() -> new IllegalStateException("contact id: " + updatedApplication.getContactId() + " not found")));
         }
 
         applicationRepository.save(existingApplication);
@@ -81,7 +80,59 @@ public class ApplicationService
 
     public void deleteApplication(Long applicationId)
     {
-        applicationRepository.delete(applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found"));
+
+        // Nullify the reference on the owning side
+        JobListing listing = application.getJobListing();
+        if(listing != null)
+        {
+            listing.setApplication(null);
+            jobListingRepository.save(listing);
+        }
+
+        applicationRepository.delete(application);
+
+//        applicationRepository.delete(applicationRepository.findById(applicationId)
+//                .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
+    }
+
+    // dto helpers
+    public Application requestToApplication(ApplicationRequest applicationRequest)
+    {
+        Application application = new Application();
+
+        application.setDateApplied(applicationRequest.getDateApplied());
+        application.setNotes(applicationRequest.getNotes());
+        application.setApplicationStatus(applicationRequest.getApplicationStatus());
+        application.setJobListing(jobListingRepository.findById(applicationRequest.getJobListingId())
+                .orElseThrow(() -> new IllegalStateException("job listing id: " + applicationRequest.getJobListingId() + " not found")));
+        if(applicationRequest.getContactId() != null)
+        {
+            application.setContact(contactRepository.findById(applicationRequest.getContactId())
+                    .orElseThrow(() -> new IllegalStateException("contact id: " + applicationRequest.getContactId() + " not found")));
+        }
+
+        return application;
+    }
+
+    public ApplicationResponse applicationToResponse(Application application)
+    {
+        ApplicationResponse response = new ApplicationResponse();
+
+        response.setApplicationId(application.getId());
+        response.setDateApplied(application.getDateApplied());
+        response.setNotes(application.getNotes());
+        response.setApplicationStatus(application.getApplicationStatus());
+        response.setJobListingId(application.getJobListing().getId());
+        response.setJobListingTitle(application.getJobListing().getTitle());
+
+        if(application.getContact() != null)
+        {
+            response.setContactId(application.getContact().getId());
+            response.setContactName(application.getContact().getName());
+        }
+
+        return response;
     }
 }

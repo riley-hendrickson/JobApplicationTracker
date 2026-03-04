@@ -3,7 +3,8 @@ package rileyhe1.jobapplicationtracker.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rileyhe1.jobapplicationtracker.entities.JobListing;
+import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingRequest;
+import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingResponse;
 import rileyhe1.jobapplicationtracker.enums.ListingStatus;
 import rileyhe1.jobapplicationtracker.services.JobListingService;
 
@@ -22,19 +23,19 @@ public class JobListingController
     }
 
     @GetMapping
-    public ResponseEntity<List<JobListing>> getJobListings()
+    public ResponseEntity<List<JobListingResponse>> getJobListings()
     {
         return ResponseEntity.ok(jobListingService.getJobListings());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<JobListing> getJobListingById(@PathVariable Long id)
+    public ResponseEntity<JobListingResponse> getJobListingById(@PathVariable Long id)
     {
         return ResponseEntity.ok(jobListingService.getJobListing(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<JobListing>> searchListings(
+    public ResponseEntity<List<JobListingResponse>> searchListings(
             @RequestParam(required = false) Long companyId,
             @RequestParam(required = false) ListingStatus listingStatus)
     {
@@ -43,14 +44,14 @@ public class JobListingController
                 Optional.ofNullable(listingStatus)));
     }
 
-    @PostMapping("{companyId}")
-    public ResponseEntity<JobListing> createJobListing(@PathVariable Long companyId, @RequestBody JobListing newListing)
+    @PostMapping
+    public ResponseEntity<JobListingResponse> createJobListing(@RequestBody JobListingRequest newListing)
     {
-        return ResponseEntity.status(HttpStatus.CREATED).body(jobListingService.createJobListing(companyId, newListing));
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobListingService.createJobListing(newListing));
     }
 
     @PutMapping("{listingId}")
-    public ResponseEntity<Void> updateJobListing(@PathVariable Long listingId, @RequestBody JobListing updatedListing)
+    public ResponseEntity<Void> updateJobListing(@PathVariable Long listingId, @RequestBody JobListingRequest updatedListing)
     {
         jobListingService.updateJobListing(listingId, updatedListing);
         return ResponseEntity.noContent().build();

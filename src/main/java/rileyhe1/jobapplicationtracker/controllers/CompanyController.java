@@ -3,7 +3,8 @@ package rileyhe1.jobapplicationtracker.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rileyhe1.jobapplicationtracker.entities.Company;
+import rileyhe1.jobapplicationtracker.dto.company.CompanyRequest;
+import rileyhe1.jobapplicationtracker.dto.company.CompanyResponse;
 import rileyhe1.jobapplicationtracker.services.CompanyService;
 
 import java.util.List;
@@ -20,25 +21,25 @@ public class CompanyController
     }
 
     @GetMapping
-    public ResponseEntity<List<Company>> getCompanies()
+    public ResponseEntity<List<CompanyResponse>> getCompanies()
     {
         return ResponseEntity.ok(companyService.getAllCompanies());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Company> getCompanyByID(@PathVariable Long id)
+    public ResponseEntity<CompanyResponse> getCompanyByID(@PathVariable Long id)
     {
         return ResponseEntity.ok(companyService.getCompanyByID(id));
     }
 
     @PostMapping
-    public ResponseEntity<Company> addCompany(@RequestBody Company newCompany)
+    public ResponseEntity<CompanyResponse> addCompany(@RequestBody CompanyRequest newCompany)
     {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(newCompany));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateCompany(@PathVariable Long id, @RequestBody Company updatedCompany)
+    public ResponseEntity<Void> updateCompany(@PathVariable Long id, @RequestBody CompanyRequest updatedCompany)
     {
         companyService.updateCompany(id, updatedCompany);
         return ResponseEntity.noContent().build();
