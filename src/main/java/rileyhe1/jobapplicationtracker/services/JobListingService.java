@@ -32,7 +32,7 @@ public class JobListingService
                 .collect(Collectors.toList());
     }
 
-    public JobListingResponse getJobListing(Long id)
+    public JobListingResponse getJobListingById(Long id)
     {
         return jobListingToResponse(jobListingRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found")));

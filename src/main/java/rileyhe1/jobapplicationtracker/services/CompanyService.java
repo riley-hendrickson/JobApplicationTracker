@@ -51,7 +51,7 @@ public class CompanyService
         companyRepository.save(existingCompany);
     }
 
-    public void deleteCompanyByID(Long id)
+    public void deleteCompany(Long id)
     {
         companyRepository.delete(companyRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found")));

@@ -35,7 +35,7 @@ public class ApplicationService
                 .collect(Collectors.toList());
     }
 
-    public ApplicationResponse getApplication(Long applicationId)
+    public ApplicationResponse getApplicationById(Long applicationId)
     {
         return applicationToResponse(applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));

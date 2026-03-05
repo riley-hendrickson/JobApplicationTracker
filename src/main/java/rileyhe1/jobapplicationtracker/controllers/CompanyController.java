@@ -49,7 +49,7 @@ public class CompanyController
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id)
     {
-        companyService.deleteCompanyByID(id);
+        companyService.deleteCompany(id);
         return ResponseEntity.noContent().build();
     }
 }

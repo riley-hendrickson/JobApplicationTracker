@@ -31,7 +31,7 @@ public class ApplicationController
     @GetMapping("{id}")
     public ResponseEntity<ApplicationResponse> getApplicationById(@PathVariable Long id)
     {
-        return ResponseEntity.ok(applicationService.getApplication(id));
+        return ResponseEntity.ok(applicationService.getApplicationById(id));
     }
 
     @PostMapping

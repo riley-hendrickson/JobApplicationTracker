@@ -32,7 +32,7 @@ public class JobListingController
     @GetMapping("{id}")
     public ResponseEntity<JobListingResponse> getJobListingById(@PathVariable Long id)
     {
-        return ResponseEntity.ok(jobListingService.getJobListing(id));
+        return ResponseEntity.ok(jobListingService.getJobListingById(id));
     }
 
     @GetMapping("/search")
