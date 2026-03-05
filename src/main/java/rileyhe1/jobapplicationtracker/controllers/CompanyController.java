@@ -1,5 +1,6 @@
 package rileyhe1.jobapplicationtracker.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +34,13 @@ public class CompanyController
     }
 
     @PostMapping
-    public ResponseEntity<CompanyResponse> createCompany(@RequestBody CompanyRequest newCompany)
+    public ResponseEntity<CompanyResponse> createCompany(@Valid @RequestBody CompanyRequest newCompany)
     {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(newCompany));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateCompany(@PathVariable Long id, @RequestBody CompanyRequest updatedCompany)
+    public ResponseEntity<Void> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest updatedCompany)
     {
         companyService.updateCompany(id, updatedCompany);
         return ResponseEntity.noContent().build();

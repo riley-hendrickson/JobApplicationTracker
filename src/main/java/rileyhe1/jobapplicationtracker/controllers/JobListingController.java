@@ -1,5 +1,6 @@
 package rileyhe1.jobapplicationtracker.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,13 +46,13 @@ public class JobListingController
     }
 
     @PostMapping
-    public ResponseEntity<JobListingResponse> createJobListing(@RequestBody JobListingRequest newListing)
+    public ResponseEntity<JobListingResponse> createJobListing(@Valid @RequestBody JobListingRequest newListing)
     {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobListingService.createJobListing(newListing));
     }
 
     @PutMapping("{listingId}")
-    public ResponseEntity<Void> updateJobListing(@PathVariable Long listingId, @RequestBody JobListingRequest updatedListing)
+    public ResponseEntity<Void> updateJobListing(@PathVariable Long listingId, @Valid @RequestBody JobListingRequest updatedListing)
     {
         jobListingService.updateJobListing(listingId, updatedListing);
         return ResponseEntity.noContent().build();

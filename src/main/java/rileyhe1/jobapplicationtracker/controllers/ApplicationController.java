@@ -1,5 +1,6 @@
 package rileyhe1.jobapplicationtracker.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class ApplicationController
     }
 
     @PostMapping
-    public ResponseEntity<ApplicationResponse> createApplication(@RequestBody ApplicationRequest newApplication)
+    public ResponseEntity<ApplicationResponse> createApplication(@Valid @RequestBody ApplicationRequest newApplication)
     {
         return ResponseEntity.status(HttpStatus.CREATED).body(applicationService.createApplication(newApplication));
     }
@@ -48,7 +49,7 @@ public class ApplicationController
 
     @PutMapping("{id}")
     public ResponseEntity<Void> updateApplication(@PathVariable Long id,
-                                                  @RequestBody ApplicationRequest updatedApplication)
+                                                  @Valid @RequestBody ApplicationRequest updatedApplication)
     {
         applicationService.updateApplication(id, updatedApplication);
         return ResponseEntity.noContent().build();

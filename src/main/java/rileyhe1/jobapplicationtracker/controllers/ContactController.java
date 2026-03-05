@@ -1,5 +1,6 @@
 package rileyhe1.jobapplicationtracker.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class ContactController
     }
 
     @PostMapping
-    public ResponseEntity<ContactResponse> createContact(@RequestBody ContactRequest newContact)
+    public ResponseEntity<ContactResponse> createContact(@Valid @RequestBody ContactRequest newContact)
     {
         return ResponseEntity.status(HttpStatus.CREATED).body(contactService.createContact(newContact));
     }
@@ -47,7 +48,7 @@ public class ContactController
     @PutMapping("{existingId}")
     public ResponseEntity<Void> updateContact(
             @PathVariable Long existingId,
-            @RequestBody ContactRequest updatedContact)
+            @Valid @RequestBody ContactRequest updatedContact)
     {
         contactService.updateContact(existingId, updatedContact);
         return ResponseEntity.noContent().build();
