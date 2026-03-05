@@ -1,6 +1,7 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rileyhe1.jobapplicationtracker.dto.contact.ContactRequest;
 import rileyhe1.jobapplicationtracker.dto.contact.ContactResponse;
 import rileyhe1.jobapplicationtracker.entities.Contact;
@@ -15,12 +16,14 @@ public class ContactService
 {
     private final ContactRepository contactRepository;
     private final CompanyRepository companyRepository;
+
     public ContactService(ContactRepository contactRepository, CompanyRepository companyRepository)
     {
         this.contactRepository = contactRepository;
         this.companyRepository = companyRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<ContactResponse> getContacts()
     {
         return contactRepository.findAll()
@@ -29,12 +32,14 @@ public class ContactService
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public ContactResponse getContactByID(Long id)
     {
         return contactToResponse(contactRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found")));
     }
 
+    @Transactional(readOnly = true)
     public List<ContactResponse> findContactsByCompanyId (Long companyId)
     {
         return contactRepository.findByCompanyId(companyId)
@@ -42,12 +47,13 @@ public class ContactService
                 .map(this::contactToResponse)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public ContactResponse createContact(ContactRequest newContact)
     {
         return contactToResponse(contactRepository.save(requestToContact(newContact)));
     }
 
+    @Transactional
     public void updateContact(Long existingContactId, ContactRequest updatedContact)
     {
         Contact existingContact = contactRepository.findById(existingContactId)
@@ -63,6 +69,7 @@ public class ContactService
         contactRepository.save(existingContact);
     }
 
+    @Transactional
     public void deleteContact(Long contactId)
     {
         contactRepository.delete(contactRepository.findById(contactId)

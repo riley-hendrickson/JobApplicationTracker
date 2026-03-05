@@ -1,6 +1,7 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingRequest;
 import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingResponse;
 import rileyhe1.jobapplicationtracker.entities.JobListing;
@@ -24,6 +25,7 @@ public class JobListingService
         this.companyRepository = companyRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<JobListingResponse> getJobListings()
     {
         return jobListingRepository.findAll()
@@ -32,38 +34,14 @@ public class JobListingService
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public JobListingResponse getJobListingById(Long id)
     {
         return jobListingToResponse(jobListingRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found")));
     }
 
-    public JobListingResponse createJobListing(JobListingRequest newListing)
-    {
-        return jobListingToResponse(jobListingRepository.save(requestToJobListing(newListing)));
-    }
-
-    public void updateJobListing(Long existingListingId, JobListingRequest updatedListing)
-    {
-        JobListing existingListing = jobListingRepository.findById(existingListingId)
-                .orElseThrow(() -> new IllegalStateException(existingListingId + " not found"));
-
-        existingListing.setTitle(updatedListing.getTitle());
-        existingListing.setDescription(updatedListing.getDescription());
-        existingListing.setSalaryMin(updatedListing.getSalaryMin());
-        existingListing.setSalaryMax(updatedListing.getSalaryMax());
-        existingListing.setListingStatus(updatedListing.getListingStatus());
-        existingListing.setDatePosted(updatedListing.getDatePosted());
-
-        jobListingRepository.save(existingListing);
-    }
-
-    public void deleteJobListing(Long id)
-    {
-        jobListingRepository.delete(jobListingRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(id + " not found")));
-    }
-
+    @Transactional(readOnly = true)
     public List<JobListingResponse> findListings(Optional<Long> companyId, Optional<ListingStatus> listingStatus)
     {
         List<JobListing> listings;
@@ -84,6 +62,35 @@ public class JobListingService
             listings = jobListingRepository.findAll();
         }
         return listings.stream().map(this::jobListingToResponse).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public JobListingResponse createJobListing(JobListingRequest newListing)
+    {
+        return jobListingToResponse(jobListingRepository.save(requestToJobListing(newListing)));
+    }
+
+    @Transactional
+    public void updateJobListing(Long existingListingId, JobListingRequest updatedListing)
+    {
+        JobListing existingListing = jobListingRepository.findById(existingListingId)
+                .orElseThrow(() -> new IllegalStateException(existingListingId + " not found"));
+
+        existingListing.setTitle(updatedListing.getTitle());
+        existingListing.setDescription(updatedListing.getDescription());
+        existingListing.setSalaryMin(updatedListing.getSalaryMin());
+        existingListing.setSalaryMax(updatedListing.getSalaryMax());
+        existingListing.setListingStatus(updatedListing.getListingStatus());
+        existingListing.setDatePosted(updatedListing.getDatePosted());
+
+        jobListingRepository.save(existingListing);
+    }
+
+    @Transactional
+    public void deleteJobListing(Long id)
+    {
+        jobListingRepository.delete(jobListingRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException(id + " not found")));
     }
 
     // dto helpers

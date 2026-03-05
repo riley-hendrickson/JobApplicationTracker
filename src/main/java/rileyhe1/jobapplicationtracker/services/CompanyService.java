@@ -1,6 +1,7 @@
 package rileyhe1.jobapplicationtracker.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rileyhe1.jobapplicationtracker.dto.company.CompanyRequest;
 import rileyhe1.jobapplicationtracker.dto.company.CompanyResponse;
 import rileyhe1.jobapplicationtracker.entities.Company;
@@ -19,12 +20,14 @@ public class CompanyService
         this.companyRepository = companyRepository;
     }
 
+    @Transactional(readOnly = true)
     public CompanyResponse getCompanyByID(Long id)
     {
         return companyToResponse(companyRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Company id: " + id + " not found")));
     }
 
+    @Transactional(readOnly = true)
     public List<CompanyResponse> getAllCompanies()
     {
         return companyRepository.findAll()
@@ -32,12 +35,12 @@ public class CompanyService
                 .map(this::companyToResponse)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public CompanyResponse createCompany(CompanyRequest newCompany)
     {
         return companyToResponse(companyRepository.save(requestToCompany(newCompany)));
     }
-
+    @Transactional
     public void updateCompany(Long id, CompanyRequest updatedCompany)
     {
         Company existingCompany = companyRepository.findById(id)
@@ -50,7 +53,7 @@ public class CompanyService
 
         companyRepository.save(existingCompany);
     }
-
+    @Transactional
     public void deleteCompany(Long id)
     {
         companyRepository.delete(companyRepository.findById(id)

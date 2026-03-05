@@ -1,5 +1,6 @@
 package rileyhe1.jobapplicationtracker.services;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import rileyhe1.jobapplicationtracker.dto.application.ApplicationRequest;
 import rileyhe1.jobapplicationtracker.dto.application.ApplicationResponse;
@@ -27,6 +28,7 @@ public class ApplicationService
         this.contactRepository = contactRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<ApplicationResponse> getApplications()
     {
         return applicationRepository.findAll()
@@ -34,13 +36,13 @@ public class ApplicationService
                 .map(this::applicationToResponse)
                 .collect(Collectors.toList());
     }
-
+    @Transactional(readOnly = true)
     public ApplicationResponse getApplicationById(Long applicationId)
     {
         return applicationToResponse(applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
     }
-
+    @Transactional(readOnly = true)
     public List<ApplicationResponse> findByApplicationStatus(ApplicationStatus applicationStatus)
     {
         if(applicationStatus == null) return getApplications();
@@ -49,7 +51,7 @@ public class ApplicationService
                 .map(this:: applicationToResponse)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public ApplicationResponse createApplication(ApplicationRequest newApplication)
     {
         if(applicationRepository.findByJobListingId(newApplication.getJobListingId()).isPresent())
@@ -59,7 +61,7 @@ public class ApplicationService
 
         return applicationToResponse(applicationRepository.save(requestToApplication(newApplication)));
     }
-
+    @Transactional
     public void updateApplicationStatus(Long existingApplicationId, ApplicationStatus newStatus)
     {
         Application existingApplication = applicationRepository.findById(existingApplicationId)
@@ -68,7 +70,7 @@ public class ApplicationService
         existingApplication.setApplicationStatus(newStatus);
         applicationRepository.save(existingApplication);
     }
-
+    @Transactional
     public void updateApplication(Long existingApplicationId, ApplicationRequest updatedApplication)
     {
         Application existingApplication = applicationRepository.findById(existingApplicationId)
@@ -86,7 +88,7 @@ public class ApplicationService
 
         applicationRepository.save(existingApplication);
     }
-
+    @Transactional
     public void deleteApplication(Long applicationId)
     {
         Application application = applicationRepository.findById(applicationId)
