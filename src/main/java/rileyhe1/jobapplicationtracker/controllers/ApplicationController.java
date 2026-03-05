@@ -34,6 +34,13 @@ public class ApplicationController
         return ResponseEntity.ok(applicationService.getApplicationById(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ApplicationResponse>> findApplicationsByStatus(
+            @RequestParam(required = false) ApplicationStatus applicationStatus)
+    {
+        return ResponseEntity.ok(applicationService.findByApplicationStatus(applicationStatus));
+    }
+
     @PostMapping
     public ResponseEntity<ApplicationResponse> createApplication(@Valid @RequestBody ApplicationRequest newApplication)
     {

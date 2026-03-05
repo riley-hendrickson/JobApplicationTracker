@@ -41,6 +41,15 @@ public class ApplicationService
                 .orElseThrow(() -> new IllegalStateException("Application id: " + applicationId + " not found")));
     }
 
+    public List<ApplicationResponse> findByApplicationStatus(ApplicationStatus applicationStatus)
+    {
+        if(applicationStatus == null) return getApplications();
+        return applicationRepository.findByApplicationStatus(applicationStatus)
+                .stream()
+                .map(this:: applicationToResponse)
+                .collect(Collectors.toList());
+    }
+
     public ApplicationResponse createApplication(ApplicationRequest newApplication)
     {
         if(applicationRepository.findByJobListingId(newApplication.getJobListingId()).isPresent())
