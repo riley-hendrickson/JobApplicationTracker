@@ -8,6 +8,7 @@ import rileyhe1.jobapplicationtracker.dto.ErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ControllerAdvice
 public class GlobalExceptionHandler
@@ -21,12 +22,23 @@ public class GlobalExceptionHandler
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleInvalidMethodArgument(MethodArgumentNotValidException e)
     {
-        String errorMessage = e.getBindingResult()
+        String fieldErrors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-        return ResponseEntity.status(404).body(new ErrorResponse(errorMessage, LocalDateTime.now().toString()));
+
+        String globalErrors = e.getBindingResult()
+                .getGlobalErrors()
+                .stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        String errorMessage = Stream.of(fieldErrors, globalErrors)
+                .filter(s -> !s.isBlank())
+                .collect(Collectors.joining(", "));
+
+        return ResponseEntity.status(400).body(new ErrorResponse(errorMessage, LocalDateTime.now().toString()));
     }
 
     @ExceptionHandler(Exception.class)

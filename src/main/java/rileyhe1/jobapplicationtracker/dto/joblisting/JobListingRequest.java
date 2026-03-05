@@ -8,12 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rileyhe1.jobapplicationtracker.enums.ListingStatus;
+import rileyhe1.jobapplicationtracker.validation.ValidSalaryRange;
 
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidSalaryRange
 public class JobListingRequest
 {
     @NotBlank
