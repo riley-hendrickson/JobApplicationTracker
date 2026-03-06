@@ -6,15 +6,15 @@ A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job appl
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Language | Java 25 |
-| Framework | Spring Boot 4 |
+| Layer | Technology                  |
+|---|-----------------------------|
+| Language | Java 25                     |
+| Framework | Spring Boot 4               |
 | Persistence | Spring Data JPA / Hibernate |
-| Database | PostgreSQL (Docker) |
-| Validation | Jakarta Bean Validation |
-| Build | Maven |
-| Utilities | Lombok |
+| Database | PostgreSQL with Docker      |
+| Validation | Jakarta Bean Validation     |
+| Build | Maven                       |
+| Utilities | Lombok                      |
 
 ---
 
