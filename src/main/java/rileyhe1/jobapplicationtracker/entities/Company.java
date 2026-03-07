@@ -2,6 +2,7 @@ package rileyhe1.jobapplicationtracker.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 public class Company
 {
     @Id()
@@ -40,5 +42,17 @@ public class Company
         this.location = location;
         this.website = website;
         this.industry = industry;
+    }
+
+    // all args constructor for builder testing only
+    private Company(Long id, String name, String location, String website, String industry, List<JobListing> jobListings, List<Contact> contacts)
+    {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.website = website;
+        this.industry = industry;
+        this.jobListings = jobListings;
+        this.contacts = contacts;
     }
 }
