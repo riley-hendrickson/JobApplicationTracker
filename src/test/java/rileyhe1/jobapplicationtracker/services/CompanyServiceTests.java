@@ -36,7 +36,6 @@ public class CompanyServiceTests
 
         CompanyResponse response = companyService.getCompanyByID(1L);
 
-
         assertThat(response.getName()).isEqualTo("Google");
         assertThat(response.getLocation()).isEqualTo("Seattle, WA");
         assertThat(response.getWebsite()).isEqualTo("google.com");
