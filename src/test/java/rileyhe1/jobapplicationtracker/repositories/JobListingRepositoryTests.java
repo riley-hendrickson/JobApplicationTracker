@@ -40,7 +40,7 @@ public class JobListingRepositoryTests
 
         List<JobListing> results = jobListingRepository.findByCompanyId(company1.getId());
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getCompany().getId()).isEqualTo(company1.getId());
+        assertThat(results.getFirst().getCompany().getId()).isEqualTo(company1.getId());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class JobListingRepositoryTests
 
         List<JobListing> results = jobListingRepository.findByListingStatus(ListingStatus.OPEN);
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getListingStatus()).isEqualTo(ListingStatus.OPEN);
+        assertThat(results.getFirst().getListingStatus()).isEqualTo(ListingStatus.OPEN);
     }
 
     @Test
