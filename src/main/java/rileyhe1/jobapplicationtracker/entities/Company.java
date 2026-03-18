@@ -15,7 +15,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 public class Company
 {
     @Id()
@@ -44,8 +43,8 @@ public class Company
         this.industry = industry;
     }
 
-    // all args constructor for builder testing only
-    private Company(Long id, String name, String location, String website, String industry, List<JobListing> jobListings, List<Contact> contacts)
+    // constructor for testing only
+    public Company(String name, String location, String website, String industry)
     {
         this.id = id;
         this.name = name;

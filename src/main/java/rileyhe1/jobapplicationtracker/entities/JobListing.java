@@ -44,4 +44,15 @@ public class JobListing
         this.listingStatus = listingStatus;
         this.datePosted = datePosted;
     }
+
+    // constructor for testing only
+    public JobListing(String title, String description, Integer salaryMin, Integer salaryMax, LocalDate datePosted, ListingStatus listingStatus)
+    {
+        this.title = title;
+        this.description = description;
+        this.salaryMin = salaryMin;
+        this.salaryMax = salaryMax;
+        this.datePosted = datePosted;
+        this.listingStatus = listingStatus;
+    }
 }
