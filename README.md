@@ -1,5 +1,7 @@
 # Job Application Tracker API
 
+![CI](https://github.com/riley-hendrickson/JobApplicationTracker/actions/workflows/ci.yml/badge.svg)
+
 A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job applications throughout the hiring process. Designed to manage companies, job listings, contacts, and applications — all wired together with clean JPA relationships and a layered Spring architecture.
 
 ---
