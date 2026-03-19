@@ -8,15 +8,15 @@ A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job appl
 
 ## Tech Stack
 
-| Layer | Technology                  |
-|---|-----------------------------|
-| Language | Java 25                     |
-| Framework | Spring Boot 4               |
+| Layer | Technology |
+|---|---|
+| Language | Java 25 |
+| Framework | Spring Boot 4 |
 | Persistence | Spring Data JPA / Hibernate |
-| Database | PostgreSQL with Docker      |
-| Validation | Jakarta Bean Validation     |
-| Build | Maven                       |
-| Utilities | Lombok                      |
+| Database | PostgreSQL with Docker |
+| Validation | Jakarta Bean Validation |
+| Build | Maven |
+| Utilities | Lombok |
 
 ---
 
@@ -45,6 +45,38 @@ Company
 ```
 
 Deleting a company cascades to its listings and contacts. Deleting a contact nullifies the reference on any associated application rather than deleting it.
+
+---
+
+## Testing
+
+The project has comprehensive test coverage across all layers, with tests run automatically on every push via GitHub Actions.
+
+| Layer | Approach | Annotations |
+|---|---|---|
+| Service | Unit tests with mocked repositories | `@ExtendWith(MockitoExtension.class)` |
+| Controller | Web layer slice tests with MockMvc | `@WebMvcTest` |
+| Repository | JPA slice tests against H2 in-memory database | `@DataJpaTest` |
+
+**Service tests** cover happy paths, sad paths, and business logic branches — including the duplicate application rule, optional contact handling in `updateApplication`, and all four filter combinations in `findListings`.
+
+**Controller tests** verify correct HTTP status codes, request routing, response body serialization, and `@Valid` rejection of malformed input.
+
+**Repository tests** validate all custom derived query methods: `findByCompanyId`, `findByListingStatus`, `findByCompanyIdAndListingStatus`, `findByJobListingId`, and `findByApplicationStatus`.
+
+To run the full test suite locally:
+
+```bash
+mvn test
+```
+
+---
+
+## CI/CD
+
+A GitHub Actions pipeline runs on every push and pull request to `main`. It checks out the code, sets up Java 25 (Temurin), and runs `mvn test` against the H2 in-memory database — no external dependencies required.
+
+Pipeline configuration: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 ---
 
