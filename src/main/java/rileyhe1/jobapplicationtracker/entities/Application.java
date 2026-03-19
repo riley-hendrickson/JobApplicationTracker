@@ -43,4 +43,11 @@ public class Application
         this.notes = notes;
         this.applicationStatus = applicationStatus;
     }
+
+    public Application(LocalDate dateApplied, String notes, ApplicationStatus applicationStatus)
+    {
+        this.dateApplied = dateApplied;
+        this.notes = notes;
+        this.applicationStatus = applicationStatus;
+    }
 }

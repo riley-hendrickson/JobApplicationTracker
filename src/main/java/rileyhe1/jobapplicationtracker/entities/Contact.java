@@ -32,4 +32,12 @@ public class Contact
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
+
+    public Contact(String name, String title, String email, String phoneNumber)
+    {
+        this.name = name;
+        this.title = title;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 }
