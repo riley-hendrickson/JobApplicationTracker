@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
@@ -11,8 +12,10 @@ import org.springframework.http.MediaType;
 import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingRequest;
 import rileyhe1.jobapplicationtracker.dto.joblisting.JobListingResponse;
 import rileyhe1.jobapplicationtracker.enums.ListingStatus;
+import rileyhe1.jobapplicationtracker.security.JwtService;
 import rileyhe1.jobapplicationtracker.services.JobListingService;
 
+import rileyhe1.jobapplicationtracker.services.UserService;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
@@ -28,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(JobListingController.class)
+@WithMockUser
 public class JobListingControllerTests
 {
     @Autowired
@@ -38,6 +42,12 @@ public class JobListingControllerTests
 
     @MockitoBean
     private JobListingService jobListingService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     public void getJobListings() throws Exception

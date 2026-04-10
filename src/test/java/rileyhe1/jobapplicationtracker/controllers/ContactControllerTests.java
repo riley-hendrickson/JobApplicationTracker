@@ -5,13 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import rileyhe1.jobapplicationtracker.dto.contact.ContactRequest;
 import rileyhe1.jobapplicationtracker.dto.contact.ContactResponse;
+import rileyhe1.jobapplicationtracker.security.JwtService;
 import rileyhe1.jobapplicationtracker.services.ContactService;
 
+import rileyhe1.jobapplicationtracker.services.UserService;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +27,7 @@ import java.util.List;
 
 
 @WebMvcTest(ContactController.class)
+@WithMockUser
 public class ContactControllerTests
 {
     @Autowired
@@ -34,6 +38,12 @@ public class ContactControllerTests
 
     @MockitoBean
     private ContactService contactService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     public void getContacts_HappyPath() throws Exception

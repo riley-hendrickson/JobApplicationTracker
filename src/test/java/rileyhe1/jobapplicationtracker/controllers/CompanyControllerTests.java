@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import rileyhe1.jobapplicationtracker.dto.company.CompanyRequest;
 import rileyhe1.jobapplicationtracker.dto.company.CompanyResponse;
+import rileyhe1.jobapplicationtracker.security.JwtService;
 import rileyhe1.jobapplicationtracker.services.CompanyService;
+import rileyhe1.jobapplicationtracker.services.UserService;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CompanyController.class)
+@WithMockUser
 public class CompanyControllerTests
 {
     @Autowired
@@ -30,6 +34,12 @@ public class CompanyControllerTests
 
     @MockitoBean
     private CompanyService companyService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     public void getCompanies() throws Exception
