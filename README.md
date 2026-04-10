@@ -14,6 +14,7 @@ A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job appl
 | Framework | Spring Boot 4 |
 | Persistence | Spring Data JPA / Hibernate |
 | Database | PostgreSQL with Docker |
+| Security | Spring Security + JWT (jjwt 0.13) |
 | Validation | Jakarta Bean Validation |
 | Build | Maven |
 | Utilities | Lombok |
@@ -22,6 +23,7 @@ A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job appl
 
 ## Features
 
+- **JWT authentication** — stateless auth via signed tokens; all endpoints protected except `/auth/register` and `/auth/login`
 - **Company management** — track companies you're targeting, including location, website, and industry
 - **Job listing tracking** — store listings with title, description, salary range, post date, and status (`OPEN`, `CLOSED`, `FILLED`)
 - **Contact management** — associate recruiters and hiring managers with companies
@@ -48,6 +50,51 @@ Deleting a company cascades to its listings and contacts. Deleting a contact nul
 
 ---
 
+## Authentication
+
+All API endpoints (except registration and login) require a valid JWT in the `Authorization` header.
+
+### Register
+
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "username": "riley",
+  "password": "yourpassword"
+}
+```
+
+Returns a JWT token on success.
+
+### Login
+
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "username": "riley",
+  "password": "yourpassword"
+}
+```
+
+Returns a JWT token on success.
+
+### Authenticated Requests
+
+Include the token from registration or login in the `Authorization` header of every subsequent request:
+
+```http
+GET /api/companies
+Authorization: Bearer <your-token-here>
+```
+
+Requests without a valid token will receive a `401 Unauthorized` response.
+
+---
+
 ## Testing
 
 The project has comprehensive test coverage across all layers, with tests run automatically on every push via GitHub Actions.
@@ -55,12 +102,12 @@ The project has comprehensive test coverage across all layers, with tests run au
 | Layer | Approach | Annotations |
 |---|---|---|
 | Service | Unit tests with mocked repositories | `@ExtendWith(MockitoExtension.class)` |
-| Controller | Web layer slice tests with MockMvc | `@WebMvcTest` |
+| Controller | Web layer slice tests with MockMvc + security context | `@WebMvcTest`, `@WithMockUser` |
 | Repository | JPA slice tests against H2 in-memory database | `@DataJpaTest` |
 
 **Service tests** cover happy paths, sad paths, and business logic branches — including the duplicate application rule, optional contact handling in `updateApplication`, and all four filter combinations in `findListings`.
 
-**Controller tests** verify correct HTTP status codes, request routing, response body serialization, and `@Valid` rejection of malformed input.
+**Controller tests** verify correct HTTP status codes, request routing, response body serialization, and `@Valid` rejection of malformed input. Spring Security is included in the test context via `@WithMockUser`, with security infrastructure beans (`JwtService`, `UserService`) provided as mocks.
 
 **Repository tests** validate all custom derived query methods: `findByCompanyId`, `findByListingStatus`, `findByCompanyIdAndListingStatus`, `findByJobListingId`, and `findByApplicationStatus`.
 
@@ -235,5 +282,6 @@ All errors return a consistent JSON structure:
 | Status | Cause |
 |---|---|
 | `400` | Validation failure (missing required field, etc.) |
+| `401` | Missing or invalid JWT token |
 | `404` | Resource not found |
 | `500` | Unexpected server error |
