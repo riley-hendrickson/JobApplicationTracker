@@ -6,6 +6,9 @@ A RESTful API built with **Java 25** and **Spring Boot 4** for tracking job appl
 
 ---
 
+## Demo Video
+https://youtu.be/z-RuuFYkzGU
+
 ## Tech Stack
 
 | Layer | Technology |
