@@ -1,0 +1,305 @@
+### ============================================================
+### Job Application Tracker — Demo Walkthrough
+### ============================================================
+###
+### Demonstrates the full feature set of the API in a realistic
+### job-search scenario. Run requests top to bottom against a
+### clean database.
+###
+### Setup:
+###   docker compose down -v
+###   docker compose up -d
+###   mvn spring-boot:run
+###
+### Then run each request in order using the IntelliJ HTTP client.
+### The JWT captured from step 1 is reused automatically in all
+### subsequent requests via the {{jwt_token}} variable.
+### ============================================================
+
+
+### ============================================================
+### STEP 1 — Register a new user and capture the JWT
+### ============================================================
+
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "username": "riley",
+  "password": "demo1234"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+%}
+
+
+### ============================================================
+### STEP 2 — Set up companies
+### Two companies being actively targeted in the job search
+### ============================================================
+
+### Create company 1: Google
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Google",
+  "location": "Seattle, WA",
+  "website": "google.com",
+  "industry": "Technology"
+}
+
+###
+
+### Create company 2: Microsoft
+POST http://localhost:8080/api/companies
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Microsoft",
+  "location": "Redmond, WA",
+  "website": "microsoft.com",
+  "industry": "Technology"
+}
+
+###
+
+### Verify both companies exist
+GET http://localhost:8080/api/companies
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 3 — Add contacts at each company
+### Contacts represent recruiters/hiring managers and can be
+### optionally linked to an application
+### ============================================================
+
+### Create contact at Google: engineering manager
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "John Smith",
+  "title": "Engineering Manager",
+  "email": "john.smith@google.com",
+  "phoneNumber": "425-555-1234",
+  "companyId": 1
+}
+
+###
+
+### Create contact at Microsoft: recruiter
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Jane Doe",
+  "title": "Senior Recruiter",
+  "email": "jane.doe@microsoft.com",
+  "phoneNumber": "425-555-5678",
+  "companyId": 2
+}
+
+###
+
+### Filter contacts by company — confirm John is under Google (id: 1)
+GET http://localhost:8080/api/contacts/search?companyId=1
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 4 — Add job listings
+### Each listing belongs to a company and can have one application
+### ============================================================
+
+### Google listing 1: Backend Developer (OPEN)
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "title": "Backend Developer",
+  "description": "Java backend role focused on Spring Boot microservices",
+  "salaryMin": 90000,
+  "salaryMax": 120000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-02-01",
+  "companyId": 1
+}
+
+###
+
+### Google listing 2: Senior Engineer (OPEN)
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "title": "Senior Engineer",
+  "description": "Senior Java role with team lead responsibilities",
+  "salaryMin": 130000,
+  "salaryMax": 160000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-01-15",
+  "companyId": 1
+}
+
+###
+
+### Microsoft listing: Java Developer (OPEN)
+POST http://localhost:8080/api/job-listings
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "title": "Java Developer",
+  "description": "Java developer role on the Azure platform team",
+  "salaryMin": 95000,
+  "salaryMax": 125000,
+  "listingStatus": "OPEN",
+  "datePosted": "2026-01-20",
+  "companyId": 2
+}
+
+###
+
+### Filter listings by company — all Google listings (companyId: 1)
+GET http://localhost:8080/api/job-listings/search?companyId=1
+Authorization: Bearer {{jwt_token}}
+
+###
+
+### Filter listings by status — all OPEN listings across companies
+GET http://localhost:8080/api/job-listings/search?listingStatus=OPEN
+Authorization: Bearer {{jwt_token}}
+
+###
+
+### Filter by both company and status — Google OPEN listings only
+GET http://localhost:8080/api/job-listings/search?companyId=1&listingStatus=OPEN
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 5 — Apply to positions
+### Applications link to a listing (one-to-one enforced) and
+### optionally to a contact. Status lifecycle:
+###   APPLIED → PHONE_SCREEN → INTERVIEW → OFFER / REJECTED / WITHDRAWN
+### ============================================================
+
+### Apply to Google Backend Developer — referred by John Smith (with contact)
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "dateApplied": "2026-02-15",
+  "notes": "Referred by John Smith, the engineering manager",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 1,
+  "contactId": 1
+}
+
+###
+
+### Apply to Microsoft Java Developer — found on LinkedIn (no contact yet)
+POST http://localhost:8080/api/applications
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "dateApplied": "2026-02-20",
+  "notes": "Applied through LinkedIn",
+  "applicationStatus": "APPLIED",
+  "jobListingId": 3
+}
+
+###
+
+### View all active applications
+GET http://localhost:8080/api/applications
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 6 — Progress the Google application through the lifecycle
+### PATCH /status updates just the status field without requiring
+### a full request body, keeping updates lightweight
+### ============================================================
+
+### Google app moves to phone screen
+PATCH http://localhost:8080/api/applications/1/status
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+"PHONE_SCREEN"
+
+###
+
+### Phone screen went well — advance to interview
+PATCH http://localhost:8080/api/applications/1/status
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+"INTERVIEW"
+
+###
+
+### Verify the status progression on the Google application
+GET http://localhost:8080/api/applications/1
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 7 — Update the Microsoft application with a full PUT
+### Recruiter Jane reached out — link her as the contact and
+### update the notes to reflect the new context
+### ============================================================
+
+PUT http://localhost:8080/api/applications/2
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "dateApplied": "2026-02-20",
+  "notes": "Recruiter Jane Doe reached out after LinkedIn application",
+  "applicationStatus": "PHONE_SCREEN",
+  "jobListingId": 3,
+  "contactId": 2
+}
+
+###
+
+### Verify the Microsoft application now has a contact linked
+GET http://localhost:8080/api/applications/2
+Authorization: Bearer {{jwt_token}}
+
+
+### ============================================================
+### STEP 8 — Cascade delete demonstration
+### Deleting a company cascades to its listings and contacts.
+### The Google application (id: 1) will also be removed since
+### its listing is owned by Google.
+### ============================================================
+
+### Delete Microsoft (company id: 2)
+DELETE http://localhost:8080/api/companies/2
+Authorization: Bearer {{jwt_token}}
+
+###
+
+### Confirm Microsoft's listing is gone (expect 404)
+GET http://localhost:8080/api/job-listings/3
+Authorization: Bearer {{jwt_token}}
+
+###
+
+### Confirm only the Google application remains
+GET http://localhost:8080/api/applications
+Authorization: Bearer {{jwt_token}}
